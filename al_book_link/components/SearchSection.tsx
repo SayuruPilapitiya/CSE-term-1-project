@@ -4,7 +4,18 @@ export default function SearchSection() {
     return (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Find the books you need</h2>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="flex gap-2 mb-6">
+                <button className="px-6 py-2 rounded-full bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition-colors">
+                    Sinhala Medium
+                </button>
+                <button className="px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-200 text-sm font-medium hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                    English Medium
+                </button>
+                <button className="px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-200 text-sm font-medium hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                    Tamil Medium
+                </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="flex flex-col">
                     <label className="text-xs text-gray-500 mb-1">Stream</label>
                     <select className="bg-gray-100 border-none rounded-md px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none">
@@ -31,15 +42,6 @@ export default function SearchSection() {
                         <option>Colombo</option>
                         <option>Kandy</option>
                         <option>Galle</option>
-                    </select>
-                </div>
-                <div className="flex flex-col">
-                    <label className="text-xs text-gray-500 mb-1">Medium</label>
-                    <select className="bg-gray-100 border-none rounded-md px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option>All Mediums</option>
-                        <option>Sinhala</option>
-                        <option>English</option>
-                        <option>Tamil</option>
                     </select>
                 </div>
                 <div className="flex items-end">
