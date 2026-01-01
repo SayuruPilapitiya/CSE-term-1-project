@@ -187,10 +187,8 @@ export async function createBooks(books: any[]) {
 
     const booksToInsert = books.map(book => ({
         ...book,
-        seller_id: userId, // This assumes 'books' table uses 'seller_id'. If it also uses 'id' for user, change this too.
-        district: districtName,
-        town: townName,
-        seller_phone: profile.phone_number
+        seller_id: userId, // Foreign key to profiles table
+        // Additional fields like district, town, seller_phone are fetched via join on seller_id
     }));
 
     const { error } = await adminClient

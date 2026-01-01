@@ -8,9 +8,10 @@ import AdvertiseModal from './AdvertiseModal';
 
 interface HeaderProps {
     firstName?: string | null;
+    lastName?: string | null;
 }
 
-export default function Header({ firstName }: HeaderProps) {
+export default function Header({ firstName, lastName }: HeaderProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
@@ -79,6 +80,8 @@ export default function Header({ firstName }: HeaderProps) {
             <AdvertiseModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+                firstName={firstName || ''}
+                lastName={lastName || ''}
             />
         </header>
     );

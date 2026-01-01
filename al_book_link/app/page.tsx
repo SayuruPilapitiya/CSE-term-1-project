@@ -8,7 +8,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header firstName={profile?.first_name} />
+      <Header firstName={profile?.first_name} lastName={profile?.last_name} />
       <main className="container mx-auto px-4 py-8">
         <SearchSection />
         <ListingGrid />

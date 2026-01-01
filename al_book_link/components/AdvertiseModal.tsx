@@ -7,6 +7,8 @@ import { createBooks } from '../app/actions';
 interface AdvertiseModalProps {
     isOpen: boolean;
     onClose: () => void;
+    firstName: string;
+    lastName: string;
 }
 
 interface BookData {
@@ -29,7 +31,7 @@ const initialBookState: BookData = {
     extra_details: ''
 };
 
-export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps) {
+export default function AdvertiseModal({ isOpen, onClose, firstName, lastName }: AdvertiseModalProps) {
     const [currentBook, setCurrentBook] = useState<BookData>(initialBookState);
     const [bookList, setBookList] = useState<BookData[]>([]);
     const [submitting, setSubmitting] = useState(false);
@@ -96,6 +98,12 @@ export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps)
                     </button>
                 </div>
 
+                <div className="mb-6 bg-blue-50 p-3 rounded-md border border-blue-100">
+                    <p className="text-sm text-blue-800 font-medium">
+                        Publisher name: {firstName} {lastName}
+                    </p>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Form Section */}
                     <div className="space-y-4">
@@ -108,7 +116,7 @@ export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps)
                                 name="title"
                                 value={currentBook.title}
                                 onChange={handleChange}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-black"
                                 placeholder="e.g. Combined Maths 2020"
                             />
                         </div>
@@ -121,7 +129,7 @@ export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps)
                                     name="author"
                                     value={currentBook.author}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-black"
                                 />
                             </div>
                             <div>
@@ -131,7 +139,7 @@ export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps)
                                     name="price"
                                     value={currentBook.price}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-black"
                                 />
                             </div>
                         </div>
@@ -144,7 +152,7 @@ export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps)
                                     name="subject"
                                     value={currentBook.subject}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-black"
                                 />
                             </div>
                             <div>
@@ -153,7 +161,7 @@ export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps)
                                     name="condition"
                                     value={currentBook.condition}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-black"
                                 >
                                     <option value="New">New</option>
                                     <option value="Used">Used</option>
@@ -168,7 +176,7 @@ export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps)
                                 value={currentBook.description}
                                 onChange={handleChange}
                                 rows={3}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-black"
                             />
                         </div>
 
@@ -179,7 +187,7 @@ export default function AdvertiseModal({ isOpen, onClose }: AdvertiseModalProps)
                                 value={currentBook.extra_details}
                                 onChange={handleChange}
                                 rows={2}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-black"
                             />
                         </div>
 
