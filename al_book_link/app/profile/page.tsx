@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { getDistricts, getTowns, getProfile, updateProfile } from '../actions';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function ProfilePage() {
   const { isLoaded, isSignedIn } = useUser();
@@ -14,13 +15,26 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
+  const [initialData, setInitialData] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    secondaryPhone: '',
+    district: '',
+    town: '',
+    isWhatsappPrimary: false,
+    isWhatsappSecondary: false
+  });
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     phone: '',
     secondaryPhone: '',
     district: '',
-    town: ''
+    town: '',
+    isWhatsappPrimary: false,
+    isWhatsappSecondary: false
   });
 
   useEffect(() => {
@@ -39,14 +53,18 @@ export default function ProfilePage() {
       setDistricts(districtsData || []);
 
       if (profileData) {
-        setFormData({
+        const data = {
           firstName: profileData.first_name || '',
           lastName: profileData.last_name || '',
           phone: profileData.phone_number || '',
           secondaryPhone: profileData.phone_number_2 || '',
           district: profileData.district_id ? String(profileData.district_id) : '',
-          town: profileData.town_id ? String(profileData.town_id) : ''
-        });
+          town: profileData.town_id ? String(profileData.town_id) : '',
+          isWhatsappPrimary: profileData.is_whatsapp_primary || false,
+          isWhatsappSecondary: profileData.is_whatsapp_secondary || false
+        };
+        setFormData(data);
+        setInitialData(data);
 
         // If we have a district, load its towns
         if (profileData.district_id) {
@@ -86,6 +104,11 @@ export default function ProfilePage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormData(prev => ({ ...prev, [name]: checked }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -99,9 +122,12 @@ export default function ProfilePage() {
       data.append('secondaryPhone', formData.secondaryPhone);
       data.append('district', formData.district);
       data.append('town', formData.town);
+      data.append('isWhatsappPrimary', String(formData.isWhatsappPrimary));
+      data.append('isWhatsappSecondary', String(formData.isWhatsappSecondary));
 
       await updateProfile(data);
       setMessage('Profile updated successfully!');
+      setInitialData(formData);
     } catch (error) {
       console.error(error);
       setMessage('Failed to update profile.');
@@ -114,9 +140,12 @@ export default function ProfilePage() {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
+  const hasChanges = JSON.stringify(formData) !== JSON.stringify(initialData);
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl w-full mx-auto bg-white p-8 rounded-lg shadow-md">
+
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
           Edit Profile
         </h2>
@@ -176,6 +205,19 @@ export default function ProfilePage() {
                 placeholder="e.g. 0771234567"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 border text-black"
               />
+              <div className="mt-2 flex items-center">
+                <input
+                  id="isWhatsappPrimary"
+                  name="isWhatsappPrimary"
+                  type="checkbox"
+                  checked={formData.isWhatsappPrimary}
+                  onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="isWhatsappPrimary" className="ml-2 block text-sm text-gray-900">
+                  Available in WhatsApp
+                </label>
+              </div>
             </div>
 
             {/* Secondary Phone - Not Compulsory */}
@@ -192,6 +234,19 @@ export default function ProfilePage() {
                 placeholder="e.g. 0711234567"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 border text-black"
               />
+              <div className="mt-2 flex items-center">
+                <input
+                  id="isWhatsappSecondary"
+                  name="isWhatsappSecondary"
+                  type="checkbox"
+                  checked={formData.isWhatsappSecondary}
+                  onChange={handleCheckboxChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="isWhatsappSecondary" className="ml-2 block text-sm text-gray-900">
+                  Available in WhatsApp
+                </label>
+              </div>
             </div>
 
             {/* District - Not Compulsory (Dropdown) */}
@@ -239,14 +294,19 @@ export default function ProfilePage() {
 
           </div>
 
-          <div className="flex justify-end pt-4">
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full sm:w-auto px-8 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : 'Update Profile'}
-            </button>
+          <div className="flex items-center justify-between pt-4">
+            <Link href="/" className="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+              &larr; Back to Home
+            </Link>
+            {hasChanges && (
+              <button
+                type="submit"
+                disabled={saving}
+                className="w-full sm:w-auto px-8 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Update Profile'}
+              </button>
+            )}
           </div>
         </form>
       </div>

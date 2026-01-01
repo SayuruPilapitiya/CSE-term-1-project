@@ -53,6 +53,8 @@ export async function createProfile(formData: FormData) {
     const townId = townStr ? parseInt(townStr) : null;
     const phone = formData.get('phone') as string;
     const secondaryPhone = formData.get('secondaryPhone') as string;
+    const isWhatsappPrimary = formData.get('isWhatsappPrimary') === 'true';
+    const isWhatsappSecondary = formData.get('isWhatsappSecondary') === 'true';
     const email = user.emailAddresses[0].emailAddress;
 
     // 🛑 Validation: Ensure we have valid integers for foreign keys
@@ -72,6 +74,8 @@ export async function createProfile(formData: FormData) {
             town_id: townId,
             phone_number: phone,
             phone_number_2: secondaryPhone || null,
+            is_whatsapp_primary: isWhatsappPrimary,
+            is_whatsapp_secondary: isWhatsappSecondary
         });
 
     if (error) {
@@ -123,6 +127,8 @@ export async function updateProfile(formData: FormData) {
     const townId = townStr ? parseInt(townStr) : NaN;
     const phone = formData.get('phone') as string;
     const secondaryPhone = formData.get('secondaryPhone') as string;
+    const isWhatsappPrimary = formData.get('isWhatsappPrimary') === 'true';
+    const isWhatsappSecondary = formData.get('isWhatsappSecondary') === 'true';
     const email = user.emailAddresses[0].emailAddress;
 
     // 1. Build the Data Object
@@ -133,6 +139,8 @@ export async function updateProfile(formData: FormData) {
         email: email, // Save email in case this is a new row
         phone_number: phone,
         phone_number_2: secondaryPhone || null,
+        is_whatsapp_primary: isWhatsappPrimary,
+        is_whatsapp_secondary: isWhatsappSecondary,
         updated_at: new Date().toISOString(),
     };
 
