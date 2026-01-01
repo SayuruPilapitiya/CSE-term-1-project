@@ -6,15 +6,26 @@ import { SignedIn, SignedOut, UserButton, SignOutButton } from '@clerk/nextjs';
 import { useState } from 'react';
 import AdvertiseModal from './AdvertiseModal';
 
-export default function Header() {
+interface HeaderProps {
+    firstName?: string | null;
+}
+
+export default function Header({ firstName }: HeaderProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
         <header className="bg-white border-b border-gray-200 py-4">
             <div className="container mx-auto px-4 flex justify-between items-center">
-                <Link href="/" className="flex items-center gap-2 text-xl font-bold text-gray-900">
+                <Link href="/" className="flex items-center gap-2">
                     <BookOpen className="h-6 w-6 text-blue-600" />
-                    <span>A/L BookLink</span>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xl font-bold text-gray-900">A/L BookLink</span>
+                        {firstName && (
+                            <span className="text-xl font-bold text-blue-600">
+                                Welcome {firstName}
+                            </span>
+                        )}
+                    </div>
                 </Link>
 
                 <div className="flex items-center gap-4">
@@ -37,6 +48,14 @@ export default function Header() {
                             <Plus className="h-5 w-5" />
                             Advertise your books
                         </button>
+
+                        <Link
+                            href="/profile"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 font-medium transition-colors cursor-pointer"
+                        >
+                            <User className="h-5 w-5" />
+                            My Profile
+                        </Link>
 
                         <div className="relative group">
                             <UserButton
