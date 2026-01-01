@@ -295,9 +295,14 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex items-center justify-between pt-4">
-            <Link href="/" className="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-              &larr; Back to Home
-            </Link>
+            {/* Show Back button only if profile is complete (based on SAVED data) */}
+            {initialData.firstName && initialData.phone && initialData.district && initialData.town ? (
+              <Link href="/" className="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                &larr; Back to Home
+              </Link>
+            ) : (
+              <div /> /* Spacer to keep "Update Profile" button on the right */
+            )}
             {hasChanges && (
               <button
                 type="submit"
