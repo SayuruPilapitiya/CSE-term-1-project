@@ -33,6 +33,72 @@ export async function getTowns(districtId: number) {
     return data;
 }
 
+
+export async function getRecentBooks() {
+    const { data, error } = await supabase
+        .from('books')
+        .select(`
+            id,
+            title,
+            author,
+            price,
+            subject,
+            condition,
+            description,
+            extra_details,
+            medium,
+            created_at,
+            seller_id,
+            profiles (
+                districts (name),
+                towns (name)
+            )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(8);
+
+    if (error) {
+        console.error('Error fetching recent books:', error);
+        return [];
+    }
+
+    return data;
+}
+
+export async function getUserBooks() {
+    const { userId } = await auth();
+    if (!userId) return [];
+
+    const { data, error } = await supabase
+        .from('books')
+        .select(`
+            id,
+            title,
+            author,
+            price,
+            subject,
+            condition,
+            description,
+            extra_details,
+            medium,
+            created_at,
+            seller_id,
+            profiles (
+                districts (name),
+                towns (name)
+            )
+        `)
+        .eq('seller_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching user books:', error);
+        return [];
+    }
+
+    return data;
+}
+
 // --- WRITE FUNCTIONS (Switch to 'supabaseAdmin') ---
 
 export async function createProfile(formData: FormData) {
@@ -198,6 +264,38 @@ export async function createBooks(books: any[]) {
     if (error) {
         console.error('Error creating books:', error);
         return { success: false, error: 'Database error.' };
+    }
+
+    return { success: true };
+}
+
+export async function updateBook(bookData: any) {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: 'User not authenticated' };
+
+    const adminClient = supabaseAdmin;
+    if (!adminClient) return { success: false, error: 'Server Error' };
+
+    // Verify ownership
+    // We can just rely on the where clause matching both ID and seller_id for security
+    const { error } = await adminClient
+        .from('books')
+        .update({
+            title: bookData.title,
+            author: bookData.author,
+            price: bookData.price,
+            subject: bookData.subject,
+            condition: bookData.condition,
+            description: bookData.description,
+            extra_details: bookData.extra_details,
+            medium: bookData.medium
+        })
+        .eq('id', bookData.id)
+        .eq('seller_id', userId); // Crucial: Ensure users can only edit their own books
+
+    if (error) {
+        console.error('Error updating book:', error);
+        return { success: false, error: 'Failed to update book.' };
     }
 
     return { success: true };
