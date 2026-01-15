@@ -1,17 +1,68 @@
+'use client';
 import { Search } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SearchSection() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const currentMedium = searchParams.get('medium');
+
+    const handleMediumClick = (medium: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (currentMedium === medium) {
+            params.delete('medium'); // Deselect if already selected
+        } else {
+            params.set('medium', medium);
+        }
+
+        router.push(`/?${params.toString()}`);
+    };
+
+    const handleAllClick = () => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete('medium');
+        router.push(`/?${params.toString()}`);
+    };
+
     return (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Find the books you need</h2>
             <div className="flex gap-2 mb-6">
-                <button className="px-6 py-2 rounded-full bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 transition-colors">
+                <button
+                    onClick={handleAllClick}
+                    className={`px-6 py-2 rounded-full text-sm font-medium shadow-sm transition-colors ${!currentMedium
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                >
+                    All Mediums
+                </button>
+                <button
+                    onClick={() => handleMediumClick('Sinhala')}
+                    className={`px-6 py-2 rounded-full text-sm font-medium shadow-sm transition-colors ${currentMedium === 'Sinhala'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                >
                     Sinhala Medium
                 </button>
-                <button className="px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-200 text-sm font-medium hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <button
+                    onClick={() => handleMediumClick('English')}
+                    className={`px-6 py-2 rounded-full text-sm font-medium shadow-sm transition-colors ${currentMedium === 'English'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                >
                     English Medium
                 </button>
-                <button className="px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-200 text-sm font-medium hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <button
+                    onClick={() => handleMediumClick('Tamil')}
+                    className={`px-6 py-2 rounded-full text-sm font-medium shadow-sm transition-colors ${currentMedium === 'Tamil'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                >
                     Tamil Medium
                 </button>
             </div>

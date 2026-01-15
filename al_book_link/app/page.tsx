@@ -1,11 +1,14 @@
 import Header from "@/components/Header";
 import SearchSection from "@/components/SearchSection";
 import ListingGrid from "@/components/ListingGrid";
+import Link from 'next/link';
 import { getProfile, getRecentBooks, getUserBooks } from "./actions";
 
-export default async function Home() {
+// Note: In Next.js 15+, searchParams is a Promise.
+export default async function Home(props: { searchParams: Promise<{ medium?: string }> }) {
+  const searchParams = await props.searchParams;
   const profile = await getProfile();
-  const recentBooks = await getRecentBooks();
+  const recentBooks = await getRecentBooks({ medium: searchParams?.medium });
   const userBooks = await getUserBooks();
 
   return (

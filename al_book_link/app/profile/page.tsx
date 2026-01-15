@@ -5,6 +5,7 @@ import { getDistricts, getTowns, getProfile, updateProfile } from '../actions';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import CustomSelect from '../../components/CustomSelect';
 
 export default function ProfilePage() {
   const { isLoaded, isSignedIn } = useUser();
@@ -81,9 +82,7 @@ export default function ProfilePage() {
     }
   }, [isSignedIn]);
 
-  const handleDistrictChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const districtId = e.target.value;
-
+  const handleDistrictChange = async (districtId: string) => {
     setFormData(prev => ({ ...prev, district: districtId, town: '' }));
 
     if (districtId) {
@@ -94,8 +93,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleTownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const townId = e.target.value;
+  const handleTownChange = (townId: string) => {
     setFormData(prev => ({ ...prev, town: townId }));
   };
 
@@ -143,7 +141,7 @@ export default function ProfilePage() {
   const hasChanges = JSON.stringify(formData) !== JSON.stringify(initialData);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 pt-12 pb-48 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl w-full mx-auto bg-white p-8 rounded-lg shadow-md">
 
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
@@ -251,45 +249,27 @@ export default function ProfilePage() {
 
             {/* District - Not Compulsory (Dropdown) */}
             <div>
-              <label htmlFor="district" className="block text-sm font-medium text-gray-700">
-                District
-              </label>
-              <select
-                name="district"
+              <CustomSelect
+                label="District"
                 id="district"
-                onChange={handleDistrictChange}
+                options={districts}
                 value={formData.district}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 border text-black"
-              >
-                <option value="">Select a District</option>
-                {districts.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                  </option>
-                ))}
-              </select>
+                onChange={handleDistrictChange}
+                placeholder="Select a District"
+              />
             </div>
 
             {/* Town - Not Compulsory (Dropdown) */}
             <div>
-              <label htmlFor="town" className="block text-sm font-medium text-gray-700">
-                Town
-              </label>
-              <select
-                name="town"
+              <CustomSelect
+                label="Town"
                 id="town"
-                disabled={!towns.length}
-                onChange={handleTownChange}
+                options={towns}
                 value={formData.town}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 border disabled:bg-gray-100 text-black"
-              >
-                <option value="">Select a Town</option>
-                {towns.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
+                onChange={handleTownChange}
+                disabled={!towns.length}
+                placeholder="Select a Town"
+              />
             </div>
 
           </div>

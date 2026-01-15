@@ -30,12 +30,18 @@ export async function getTowns(districtId: number) {
         console.error('Error fetching towns:', error);
         return [];
     }
-    return data;
+
+    // Filter out duplicates based on town name
+    const uniqueTowns = (data || []).filter((town, index, self) =>
+        index === self.findIndex((t) => t.name === town.name)
+    );
+
+    return uniqueTowns;
 }
 
 
-export async function getRecentBooks() {
-    const { data, error } = await supabase
+export async function getRecentBooks(filters?: { medium?: string }) {
+    let query = supabase
         .from('books')
         .select(`
             id,
@@ -50,12 +56,23 @@ export async function getRecentBooks() {
             created_at,
             seller_id,
             profiles (
+                first_name,
+                phone_number,
+                phone_number_2,
+                is_whatsapp_primary,
+                is_whatsapp_secondary,
                 districts (name),
                 towns (name)
             )
         `)
         .order('created_at', { ascending: false })
         .limit(8);
+
+    if (filters?.medium) {
+        query = query.eq('medium', filters.medium);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
         console.error('Error fetching recent books:', error);
@@ -84,6 +101,11 @@ export async function getUserBooks() {
             created_at,
             seller_id,
             profiles (
+                first_name,
+                phone_number,
+                phone_number_2,
+                is_whatsapp_primary,
+                is_whatsapp_secondary,
                 districts (name),
                 towns (name)
             )
