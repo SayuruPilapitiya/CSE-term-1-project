@@ -40,7 +40,35 @@ export async function getTowns(districtId: number) {
 }
 
 
-export async function getRecentBooks(filters?: { medium?: string }) {
+// New function: Fetch districts that actually have books listed
+export async function getActiveDistricts() {
+    const { data, error } = await supabase
+        .from('books')
+        .select(`
+            id,
+            profiles!inner (
+                districts!inner (
+                    name
+                )
+            )
+        `);
+
+    if (error) {
+        console.error('Error fetching active districts:', error);
+        return [];
+    }
+
+    // Extract unique district names
+    const districts = data.map((book: any) => book.profiles?.districts?.name).filter(Boolean);
+    const uniqueDistricts = [...new Set(districts)].sort(); // Deduplicate and sort
+
+    return uniqueDistricts;
+}
+
+
+export async function getRecentBooks(filters?: { medium?: string; subject?: string; district?: string }) {
+    const { userId } = await auth(); // Get current user ID
+
     let query = supabase
         .from('books')
         .select(`
@@ -55,21 +83,36 @@ export async function getRecentBooks(filters?: { medium?: string }) {
             medium,
             created_at,
             seller_id,
-            profiles (
+            profiles!inner (
                 first_name,
                 phone_number,
                 phone_number_2,
                 is_whatsapp_primary,
                 is_whatsapp_secondary,
-                districts (name),
+                districts!inner (name),
                 towns (name)
             )
         `)
         .order('created_at', { ascending: false })
         .limit(8);
 
+    // Exclude own books if logged in
+    if (userId) {
+        query = query.neq('seller_id', userId);
+    }
+
     if (filters?.medium) {
         query = query.eq('medium', filters.medium);
+    }
+
+    if (filters?.subject) {
+        // Use ilike for partial case-insensitive matching (e.g. "Maths" matches "Combined Maths")
+        query = query.ilike('subject', `%${filters.subject}%`);
+    }
+
+    if (filters?.district) {
+        // Filter by the joined district name
+        query = query.eq('profiles.districts.name', filters.district);
     }
 
     const { data, error } = await query;
